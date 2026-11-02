@@ -1,0 +1,26 @@
+{
+    "name": "rate-limiter",
+    "version": "1.0.0",
+    "description": "In-memory rate limiter",
+    "main": "src/server.js",
+    "scripts": {
+        "start": "node src/server.js",
+        "devStart": "nodemon src/server.js"
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "dependencies": {
+        "cors": "^2.8.6",
+        "ejs": "^7.0.2",
+        "express": "^4.21.2"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0",
+        "nodemon": "^3.1.14",
+        "supertest": "^7.0.0"
+    },
+    "jest": {
+        "testEnvironment": "node"
+    }
+}

@@ -1,0 +1,61 @@
+@baseUrl = http://localhost:5000
+@userId = test-user
+
+### Free tier - AI generate
+POST {{baseUrl}}/api/ai/generate
+X-User-ID: {{userId}}
+X-User-Tier: free
+Content-Type: application/json
+
+{}
+
+
+### Paid tier - AI generate
+POST {{baseUrl}}/api/ai/generate
+X-User-ID: {{userId}}
+X-User-Tier: paid
+Content-Type: application/json
+
+{}
+
+
+### Free tier - AI summarise
+POST {{baseUrl}}/api/ai/summarise
+X-User-ID: {{userId}}
+X-User-Tier: free
+Content-Type: application/json
+
+{}
+
+
+### Paid tier - AI summarise
+POST {{baseUrl}}/api/ai/summarise
+X-User-ID: {{userId}}
+X-User-Tier: paid
+Content-Type: application/json
+
+{}
+
+
+### Free tier - Data list
+GET {{baseUrl}}/api/data/list
+X-User-ID: {{userId}}
+X-User-Tier: free
+
+
+### Paid tier - Data list
+GET {{baseUrl}}/api/data/list
+X-User-ID: {{userId}}
+X-User-Tier: paid
+
+
+### Free tier - Data export
+GET {{baseUrl}}/api/data/export
+X-User-ID: {{userId}}
+X-User-Tier: free
+
+
+### Paid tier - Data export
+GET {{baseUrl}}/api/data/export
+X-User-ID: {{userId}}
+X-User-Tier: paid

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8fafc">
+  <title>Rate Limiter API</title>
+
+  <style>
+    :root {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      color: #172033;
+      background: #f8fafc;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .header {
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 6px 10px;
+      border: 1px solid #dbeafe;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 5vw, 40px);
+      line-height: 1.2;
+      letter-spacing: -0.04em;
+    }
+
+    .intro {
+      max-width: 650px;
+      margin: 12px 0 0;
+      color: #64748b;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .section-title {
+      margin: 0 0 14px;
+      font-size: 19px;
+      letter-spacing: -0.02em;
+    }
+
+    .endpoint-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .endpoint {
+      min-width: 0;
+      padding: 20px;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      background: #ffffff;
+      box-shadow: 0 2px 5px rgb(15 23 42 / 3%);
+    }
+
+    .endpoint-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .method {
+      display: inline-block;
+      flex-shrink: 0;
+      padding: 5px 9px;
+      border-radius: 6px;
+      background: #dcfce7;
+      color: #166534;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .method.get {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .category {
+      color: #64748b;
+      font-size: 12px;
+    }
+
+    .path {
+      display: block;
+      overflow-wrap: anywhere;
+      color: #0f172a;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .description {
+      margin: 8px 0 0;
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 26px;
+    }
+
+    .info-card {
+      min-width: 0;
+      padding: 20px;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      background: #ffffff;
+    }
+
+    .info-card h2 {
+      margin: 0 0 14px;
+      font-size: 17px;
+    }
+
+    .limit-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 13px;
+    }
+
+    .limit-row:last-child {
+      border-bottom: 0;
+    }
+
+    .limit-name {
+      color: #64748b;
+    }
+
+    .limit-value {
+      text-align: right;
+      font-weight: 700;
+    }
+
+    .header-code {
+      display: inline-block;
+      max-width: 100%;
+      padding: 7px 9px;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      background: #f8fafc;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .note {
+      margin: 12px 0 0;
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    footer {
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid #e2e8f0;
+      color: #94a3b8;
+      font-size: 12px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 28px 15px;
+      }
+
+      .endpoint-list,
+      .info-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .endpoint,
+      .info-card {
+        padding: 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <header class="header">
+      <span class="eyebrow">API Reference</span>
+      <h1>Rate Limiter API</h1>
+      <p class="intro">
+        A Node.js and Express API demonstrating custom, in-memory rate
+        limiting based on user tier and endpoint category.
+      </p>
+    </header>
+
+    <section aria-labelledby="endpoints-heading">
+      <h2 class="section-title" id="endpoints-heading">
+        Available endpoints
+      </h2>
+
+      <div class="endpoint-list">
+        <article class="endpoint">
+          <div class="endpoint-top">
+            <span class="method">POST</span>
+            <span class="category">AI category</span>
+          </div>
+          <code class="path">/api/ai/generate</code>
+          <p class="description">
+            Generate AI content. Subject to the AI request limit for the
+            selected user tier.
+          </p>
+        </article>
+
+        <article class="endpoint">
+          <div class="endpoint-top">
+            <span class="method">POST</span>
+            <span class="category">AI category</span>
+          </div>
+          <code class="path">/api/ai/summarise</code>
+          <p class="description">
+            Summarise content. Subject to the AI request limit for the
+            selected user tier.
+          </p>
+        </article>
+
+        <article class="endpoint">
+          <div class="endpoint-top">
+            <span class="method get">GET</span>
+            <span class="category">Read category</span>
+          </div>
+          <code class="path">/api/data/list</code>
+          <p class="description">
+            Retrieve the available data list.
+          </p>
+        </article>
+
+        <article class="endpoint">
+          <div class="endpoint-top">
+            <span class="method get">GET</span>
+            <span class="category">Read category</span>
+          </div>
+          <code class="path">/api/data/export</code>
+          <p class="description">
+            Access the data export endpoint.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="info-grid" aria-label="API configuration">
+      <article class="info-card">
+        <h2>Rate limits</h2>
+
+        <div class="limit-row">
+          <span class="limit-name">Free · AI</span>
+          <span class="limit-value">5 requests / min</span>
+        </div>
+
+        <div class="limit-row">
+          <span class="limit-name">Free · Read</span>
+          <span class="limit-value">30 requests / min</span>
+        </div>
+
+        <div class="limit-row">
+          <span class="limit-name">Paid · AI</span>
+          <span class="limit-value">30 requests / min</span>
+        </div>
+
+        <div class="limit-row">
+          <span class="limit-name">Paid · Read</span>
+          <span class="limit-value">120 requests / min</span>
+        </div>
+
+        <p class="note">
+          Exceeding a limit returns HTTP 429 until the current 60-second
+          window expires.
+        </p>
+      </article>
+
+      <article class="info-card">
+        <h2>Request headers</h2>
+
+        <p class="note">Choose the user tier with this header:</p>
+        <p><code class="header-code">X-User-Tier: free</code></p>
+        <p><code class="header-code">X-User-Tier: paid</code></p>
+
+        <p class="note">
+          Missing or invalid tier values default to the free tier.
+        </p>
+        <p class="note">
+          Allowed requests return a JSON response:
+          <code class="header-code">{"ok":true}</code>
+        </p>
+      </article>
+    </section>
+
+    <footer>
+      Rate Limiter API · Node.js · Express
+      <br>
+      Rate-limit state is stored in memory and resets when the server restarts.
+    </footer>
+  </main>
+</body>
+</html>
